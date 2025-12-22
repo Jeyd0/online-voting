@@ -10,8 +10,20 @@ class VoteController extends Controller
 {
     public function index()
     {
+        if(Vote::where('user_id', auth()->id())->exists()){
+            return redirect('/thank-you');
+        }
         $candidates = Candidate::all()->groupBy('position');
         return view('voter.vote', compact('candidates'));
+    }
+
+    public function results()
+    {
+        if(!Vote::where('user_id', auth()->id())->exists()){
+            return redirect()->route('vote.index')->with('error', 'You must vote before viewing results.');
+        }
+        $positions = Candidate::withCount('votes')->get()->groupBy('position');
+        return view('voter.results', compact('positions'));
     }
 
     public function vote(Request $request){
