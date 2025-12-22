@@ -15,6 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('vote.index')" :active="request()->routeIs('vote.index')">
+                        {{ __('Vote') }}
+                    </x-nav-link>
+                    @if(App\Models\Vote::where('user_id', Auth::id())->exists())
+                    <x-nav-link :href="route('results')" :active="request()->routeIs('results')">
+                        {{ __('Results') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -66,6 +74,14 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('vote.index')" :active="request()->routeIs('vote.index')">
+                {{ __('Vote') }}
+            </x-responsive-nav-link>
+            @if(App\Models\Vote::where('user_id', Auth::id())->exists())
+            <x-responsive-nav-link :href="route('results')" :active="request()->routeIs('results')">
+                {{ __('Results') }}
+            </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

@@ -45,7 +45,7 @@ class AdminController extends Controller
     }
 
     public function users(){
-        $users = User::where('role', '!=', 'admin')->get();
+        $users = User::where('role', '!=', 'admin')->with('votes')->get();
         return view('admin.users.index', compact('users'));
     }
 
@@ -55,5 +55,10 @@ class AdminController extends Controller
         }
         $user->delete();
         return back()->with('success', 'User deleted successfully');
+    }
+
+    public function destroyAllUsers(){
+        User::where('role', '!=', 'admin')->delete();
+        return back()->with('success', 'All users deleted successfully');
     }
 }

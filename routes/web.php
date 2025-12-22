@@ -33,8 +33,10 @@ Route::middleware(['auth','admin'])->group(function(){
     Route::post('/admin/candidates',[AdminController::class,'storeCandidate'])->name('admin.candidates.store');
     Route::delete('/admin/candidates/{candidate}',[AdminController::class,'destroyCandidate'])->name('admin.candidates.destroy');
     Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users.index');
+    Route::delete('/admin/users/delete-all', [AdminController::class, 'destroyAllUsers'])->name('admin.users.destroyAll');
     Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 });
 Route::middleware('auth')->post('/vote',[VoteController::class,'vote'])->name('vote');
 Route::get('/vote', [VoteController::class, 'index'])->middleware('auth')->name('vote.index');
+Route::get('/results', [VoteController::class, 'results'])->middleware('auth')->name('results');
 Route::get('/thank-you', function () { return view('thank-you'); });
