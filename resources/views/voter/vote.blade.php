@@ -24,7 +24,7 @@
                                     <div class="space-y-4 ml-4">
                                         @foreach($group as $candidate)
                                         <div class="flex items-center">
-                                            <input id="candidate_{{ $candidate->id }}" name="candidate_id" type="radio" value="{{ $candidate->id }}" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                                            <input id="candidate_{{ $candidate->id }}" name="votes[{{ $position }}]" type="radio" value="{{ $candidate->id }}" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
                                             <label for="candidate_{{ $candidate->id }}" class="ml-3 block text-sm font-medium text-gray-700">
                                                 {{ $candidate->name }} <span class="text-gray-500">({{ $candidate->party }})</span>
                                             </label>

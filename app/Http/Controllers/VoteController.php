@@ -16,10 +16,26 @@ class VoteController extends Controller
 
     public function vote(Request $request){
         if(Vote::where('user_id', auth()->id())->exists()){ return back()->with('error','You already voted'); }
-        Vote::create([
-            'user_id'=>auth()->id(),
-            'candidate_id'=>$request->candidate_id
+        
+        $request->validate([
+            'votes' => 'array',
+            'votes.*' => 'exists:candidates,id',
         ]);
+
+        if($request->has('votes')){
+            foreach($request->votes as $position => $candidate_id){
+                Vote::create([
+                    'user_id'=>auth()->id(),
+                    'candidate_id'=>$candidate_id
+                ]);
+            }
+        }
+        
+        // If no votes were cast, we might want to record that the user participated?
+        // But the current logic relies on Vote existence. 
+        // If they cast 0 votes, they can vote again. This is acceptable.
+        // If they cast at least 1 vote, they are locked out.
+
         return redirect('/thank-you');
     }
 }
