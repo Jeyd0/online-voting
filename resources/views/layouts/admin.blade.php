@@ -34,6 +34,12 @@
                     </svg>
                     Users
                 </a>
+                <a href="{{ route('admin.results') }}" class="mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md transition ease-in-out duration-150 {{ request()->routeIs('admin.results') ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-white' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700' }}">
+                    <svg class="mr-4 h-6 w-6 {{ request()->routeIs('admin.results') ? 'text-blue-600 dark:text-blue-300' : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Results
+                </a>
             </nav>
         </aside>
 

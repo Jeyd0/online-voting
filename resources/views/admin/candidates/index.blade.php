@@ -3,9 +3,18 @@
 @section('content')
     <div class="flex justify-between items-center">
         <h3 class="text-gray-700 dark:text-gray-200 text-3xl font-medium">Candidates</h3>
-        <a href="{{ route('admin.candidates.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Add Candidate
-        </a>
+        <div class="flex" style="gap: 10px;">
+            <a href="{{ route('admin.candidates.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Add Candidate
+            </a>
+            <form action="{{ route('admin.candidates.destroyAll') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete ALL candidates? This cannot be undone.');" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Delete All Candidates
+                </button>
+            </form>
+        </div>
     </div>
 
     <div class="mt-8">
@@ -32,11 +41,14 @@
                                     <div class="text-sm leading-5 text-gray-500 dark:text-gray-400">{{ $candidate->position }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 dark:border-gray-700 text-sm leading-5 font-medium">
-                                    <form action="{{ route('admin.candidates.destroy', $candidate) }}" method="POST" onsubmit="return confirm('Are you sure?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
-                                    </form>
+                                    <div class="flex justify-end" style="gap: 10px;">
+                                        <a href="{{ route('admin.candidates.edit', $candidate) }}" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-600">Edit</a>
+                                        <form action="{{ route('admin.candidates.destroy', $candidate) }}" method="POST" onsubmit="return confirm('Are you sure?');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-600">Delete</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach

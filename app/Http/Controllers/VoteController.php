@@ -10,6 +10,11 @@ class VoteController extends Controller
 {
     public function index()
     {
+        $election = \App\Models\Election::find(1);
+        if($election && $election->status === 'closed'){
+            return redirect()->route('dashboard')->with('error', 'Voting has been closed.');
+        }
+        
         if(Vote::where('user_id', auth()->id())->exists()){
             return redirect('/thank-you');
         }
@@ -27,6 +32,11 @@ class VoteController extends Controller
     }
 
     public function vote(Request $request){
+        $election = \App\Models\Election::find(1);
+        if($election && $election->status === 'closed'){
+            return back()->with('error', 'Voting has been closed.');
+        }
+        
         if(Vote::where('user_id', auth()->id())->exists()){ return back()->with('error','You already voted'); }
         
         $request->validate([
