@@ -39,9 +39,34 @@ class AdminController extends Controller
         return redirect()->route('admin.candidates.index')->with('success', 'Candidate added successfully');
     }
 
+    public function editCandidate(Candidate $candidate){
+        return view('admin.candidates.edit', compact('candidate'));
+    }
+
+    public function updateCandidate(Request $request, Candidate $candidate){
+        $request->validate([
+            'name' => 'required|string|max:255|unique:candidates,name,' . $candidate->id,
+            'position' => 'required|string|max:255',
+            'party' => 'required|string|max:255',
+        ]);
+
+        $candidate->update([
+            'name' => $request->name,
+            'position' => $request->position,
+            'party' => $request->party,
+        ]);
+
+        return redirect()->route('admin.candidates.index')->with('success', 'Candidate updated successfully');
+    }
+
     public function destroyCandidate(Candidate $candidate){
         $candidate->delete();
         return back()->with('success', 'Candidate deleted successfully');
+    }
+
+    public function destroyAllCandidates(){
+        Candidate::truncate();
+        return back()->with('success', 'All candidates deleted successfully');
     }
 
     public function users(){
@@ -60,5 +85,22 @@ class AdminController extends Controller
     public function destroyAllUsers(){
         User::where('role', '!=', 'admin')->delete();
         return back()->with('success', 'All users deleted successfully');
+    }
+
+    public function results(){
+        $positions = Candidate::withCount('votes')->get()->groupBy('position');
+        $election = \App\Models\Election::find(1);
+        return view('admin.results', compact('positions', 'election'));
+    }
+
+    public function toggleVoting(){
+        $election = \App\Models\Election::find(1);
+        if($election){
+            $election->status = $election->status === 'active' ? 'closed' : 'active';
+            $election->save();
+            $message = $election->status === 'closed' ? 'Voting has been stopped successfully' : 'Voting has been started successfully';
+            return back()->with('success', $message);
+        }
+        return back()->with('error', 'Election not found');
     }
 }
