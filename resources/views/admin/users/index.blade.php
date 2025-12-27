@@ -1,17 +1,32 @@
 @extends('layouts.admin')
 
 @section('content')
-@extends('layouts.admin')
-
-@section('content')
     <div class="flex justify-between items-center">
         <h3 class="text-gray-700 dark:text-gray-200 text-3xl font-medium">Users</h3>
         <form action="{{ route('admin.users.destroyAll') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete ALL users? This cannot be undone.');">
             @csrf
             @method('DELETE')
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <button type="submit" class="text-white font-bold py-2 px-4 rounded" style="background-color: #dc2626;" onmouseover="this.style.backgroundColor='#ef4444'" onmouseout="this.style.backgroundColor='#dc2626'">
                 Delete All Users
             </button>
+        </form>
+    </div>
+
+    <!-- Search Box -->
+    <div class="mt-6">
+        <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-2">
+            <div class="flex-1">
+                <input type="text" 
+                       name="search" 
+                       value="{{ $search ?? '' }}" 
+                       placeholder="Search by name, email, or role..." 
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            @if($search ?? false)
+                <a href="{{ route('admin.users.index') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg">
+                    Clear
+                </a>
+            @endif
         </form>
     </div>
 
@@ -39,17 +54,17 @@
                                     <div class="text-sm leading-5 text-gray-500 dark:text-gray-400">{{ $user->email }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 dark:border-gray-700">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
                                         {{ $user->role }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 dark:border-gray-700">
                                     @if($user->votes->count() > 0)
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
                                             Voted
                                         </span>
                                     @else
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200">
                                             Not Voted
                                         </span>
                                     @endif
@@ -58,7 +73,7 @@
                                     <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Are you sure?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
+                                        <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Delete</button>
                                     </form>
                                 </td>
                             </tr>
