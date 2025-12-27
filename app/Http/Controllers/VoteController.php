@@ -14,6 +14,9 @@ class VoteController extends Controller
         if($election && $election->status === 'closed'){
             return redirect()->route('dashboard')->with('error', 'Voting has been closed.');
         }
+        if($election && $election->status === 'pending'){
+            return redirect()->route('dashboard')->with('error', 'Voting has not started yet. Please wait for the admin to start the voting.');
+        }
         
         if(Vote::where('user_id', auth()->id())->exists()){
             return redirect('/thank-you');
@@ -27,14 +30,18 @@ class VoteController extends Controller
         if(!Vote::where('user_id', auth()->id())->exists()){
             return redirect()->route('vote.index')->with('error', 'You must vote before viewing results.');
         }
+        $election = \App\Models\Election::find(1);
         $positions = Candidate::withCount('votes')->get()->groupBy('position');
-        return view('voter.results', compact('positions'));
+        return view('voter.results', compact('positions', 'election'));
     }
 
     public function vote(Request $request){
         $election = \App\Models\Election::find(1);
         if($election && $election->status === 'closed'){
             return back()->with('error', 'Voting has been closed.');
+        }
+        if($election && $election->status === 'pending'){
+            return back()->with('error', 'Voting has not started yet.');
         }
         
         if(Vote::where('user_id', auth()->id())->exists()){ return back()->with('error','You already voted'); }

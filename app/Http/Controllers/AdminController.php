@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Candidate;
 use App\Models\User;
+use App\Models\Vote;
 
 class AdminController extends Controller
 {
@@ -13,9 +14,18 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('candidates'));
     }
 
-    public function candidates(){
-        $candidates = Candidate::all();
-        return view('admin.candidates.index', compact('candidates'));
+    public function candidates(Request $request){
+        $search = $request->get('search');
+        
+        $candidates = Candidate::query()
+            ->when($search, function($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('position', 'like', "%{$search}%")
+                            ->orWhere('party', 'like', "%{$search}%");
+            })
+            ->get();
+            
+        return view('admin.candidates.index', compact('candidates', 'search'));
     }
 
     public function createCandidate(){
@@ -65,13 +75,26 @@ class AdminController extends Controller
     }
 
     public function destroyAllCandidates(){
+        // Delete all votes first, then all candidates
+        Vote::truncate();
         Candidate::truncate();
-        return back()->with('success', 'All candidates deleted successfully');
+        return back()->with('success', 'All candidates and votes deleted successfully');
     }
 
-    public function users(){
-        $users = User::where('role', '!=', 'admin')->with('votes')->get();
-        return view('admin.users.index', compact('users'));
+    public function users(Request $request){
+        $search = $request->get('search');
+        
+        $users = User::query()
+            ->where('role', '!=', 'admin')
+            ->with('votes')
+            ->when($search, function($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('role', 'like', "%{$search}%");
+            })
+            ->get();
+            
+        return view('admin.users.index', compact('users', 'search'));
     }
 
     public function destroyUser(User $user){
@@ -96,9 +119,18 @@ class AdminController extends Controller
     public function toggleVoting(){
         $election = \App\Models\Election::find(1);
         if($election){
-            $election->status = $election->status === 'active' ? 'closed' : 'active';
+            // Cycle through: pending -> active -> closed -> pending
+            if($election->status === 'pending'){
+                $election->status = 'active';
+                $message = 'Voting has been started successfully';
+            } elseif($election->status === 'active'){
+                $election->status = 'closed';
+                $message = 'Voting has been stopped successfully';
+            } else {
+                $election->status = 'pending';
+                $message = 'Voting has been reset to pending';
+            }
             $election->save();
-            $message = $election->status === 'closed' ? 'Voting has been stopped successfully' : 'Voting has been started successfully';
             return back()->with('success', $message);
         }
         return back()->with('error', 'Election not found');

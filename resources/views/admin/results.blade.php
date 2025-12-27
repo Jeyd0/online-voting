@@ -5,18 +5,18 @@
         <h3 class="text-gray-700 dark:text-gray-200 text-3xl font-medium">Election Results</h3>
         <div class="flex" style="gap: 10px;">
             @if($election && $election->status === 'closed')
-                <button onclick="window.print()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-5 rounded" >
+                <button onclick="window.print()" class="text-white font-bold py-2 px-5 rounded" style="background-color: #4b5563;" onmouseover="this.style.backgroundColor='#6b7280'" onmouseout="this.style.backgroundColor='#4b5563'">
                     Print Results
                 </button>
             @endif
             <form action="{{ route('admin.toggle-voting') }}" method="POST" onsubmit="return confirm('Are you sure you want to {{ $election && $election->status === 'active' ? 'stop' : 'start' }} voting?');">
                 @csrf
                 @if($election && $election->status === 'active')
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" class="text-white font-bold py-2 px-4 rounded" style="background-color: #dc2626;" onmouseover="this.style.backgroundColor='#ef4444'" onmouseout="this.style.backgroundColor='#dc2626'">
                         Stop Voting
                     </button>
                 @else
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <button type="submit" class="text-white font-bold py-2 px-4 rounded" style="background-color: #16a34a;" onmouseover="this.style.backgroundColor='#22c55e'" onmouseout="this.style.backgroundColor='#16a34a'">
                         Start Voting
                     </button>
                 @endif
@@ -48,8 +48,8 @@
                                         $totalVotes = $sortedCandidates->sum('votes_count');
                                     @endphp
                                     @foreach($sortedCandidates as $candidate)
-                                        <tr class="{{ $loop->first ? 'bg-green-50 dark:bg-green-900' : '' }}">
-                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700">
+                                        <tr class="{{ $loop->first ? 'bg-green-50 dark:bg-green-900/50' : 'dark:bg-gray-800' }}">
+                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
                                                 <div class="flex items-center">
                                                     <span class="font-medium text-gray-900 dark:text-gray-200">{{ $candidate->name }}</span>
                                                     @if($loop->first && $candidate->votes_count > 0)
@@ -65,10 +65,10 @@
                                                     @endif
                                                 </div>
                                             </td>
-                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">{{ $candidate->party }}</td>
-                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-200 font-bold">{{ $candidate->votes_count }}</td>
+                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-300">{{ $candidate->party }}</td>
+                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white font-bold">{{ $candidate->votes_count }}</td>
                                             @if($election && $election->status === 'closed')
-                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-semibold">
+                                            <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-semibold">
                                                 @if($totalVotes > 0)
                                                     {{ number_format(($candidate->votes_count / $totalVotes) * 100, 2) }}%
                                                 @else

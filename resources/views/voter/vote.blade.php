@@ -13,12 +13,17 @@
                         $election = \App\Models\Election::find(1);
                     @endphp
                     
-                    @if($election && $election->status === 'closed')
+                    @if($election && $election->status === 'pending')
+                        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <div class="flex items-center">
+                                
+                                <span class="font-bold">Voting has not started yet!</span>
+                            </div>
+                            <p class="mt-2">Please wait for the administrator to start the voting. You will be able to cast your vote once the election begins.</p>
+                        </div>
+                    @elseif($election && $election->status === 'closed')
                         <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
                             <div class="flex items-center">
-                                <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                </svg>
                                 <span class="font-bold">Voting has been stopped!</span>
                             </div>
                             <p class="mt-2">The voting period has ended. You can no longer cast your vote. Please check the results page for final election results.</p>
@@ -31,9 +36,9 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('vote') }}" method="POST" {{ $election && $election->status === 'closed' ? 'onsubmit="return false;"' : '' }}>
+                    <form action="{{ route('vote') }}" method="POST" {{ $election && ($election->status === 'closed' || $election->status === 'pending') ? 'onsubmit="return false;"' : '' }}>
                         @csrf
-                        <div class="space-y-6" {{ $election && $election->status === 'closed' ? 'style="opacity: 0.5; pointer-events: none;"' : '' }}>
+                        <div class="space-y-6" {{ $election && ($election->status === 'closed' || $election->status === 'pending') ? 'style="opacity: 0.5; pointer-events: none;"' : '' }}>
                             @foreach($candidates as $position => $group)
                                 <div>
                                     <h3 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">{{ $position }}</h3>
@@ -51,8 +56,14 @@
                             @endforeach
                         </div>
                         <div class="mt-6">
-                            <button type="submit" {{ $election && $election->status === 'closed' ? 'disabled' : '' }} class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                {{ $election && $election->status === 'closed' ? 'Voting Closed' : 'Submit Vote' }}
+                            <button type="submit" {{ $election && ($election->status === 'closed' || $election->status === 'pending') ? 'disabled' : '' }} class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                @if($election && $election->status === 'pending')
+                                    Voting Not Started
+                                @elseif($election && $election->status === 'closed')
+                                    Voting Closed
+                                @else
+                                    Submit Vote
+                                @endif
                             </button>
                         </div>
                     </form>
